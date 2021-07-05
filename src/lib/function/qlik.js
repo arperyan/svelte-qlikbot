@@ -1,10 +1,11 @@
 import connect from "./connect";
 
 const API_KEY =
-  "eyJhbGciOiJFUzM4NCIsImtpZCI6IjMxZjdiNDMwLTkyYWQtNDRmMy1hNmUyLWM4NjVhNTk1MmVkOCIsInR5cCI6IkpXVCJ9.eyJzdWJUeXBlIjoidXNlciIsInRlbmFudElkIjoiMEN4cl9qSXZILWlqUUp5VzVrWUZIZHdKb1pObVJLT1UiLCJqdGkiOiIzMWY3YjQzMC05MmFkLTQ0ZjMtYTZlMi1jODY1YTU5NTJlZDgiLCJhdWQiOiJxbGlrLmFwaSIsImlzcyI6InFsaWsuYXBpL2FwaS1rZXlzIiwic3ViIjoiRnVvNmFyM1IzbGJ5TkdFZlVpZG1RUWF2U0Q3c2YwN1cifQ.PXrz5iQHEzLqC9Zr4wdZoG1C6QzGYyrXFPcMn4Tn4eDLdEj5k6RIaYaPCz38vwdvx_3ubdKrA6S9OXlswgvJ8LTCONZ_IvQJMtwKXlznAqKpgKbXfH_f6jjr6Gi_jnCK";
+  "eyJhbGciOiJFUzM4NCIsImtpZCI6ImU2YzQyNzQzLWUxZTItNDBmZC1iMjM5LWFmMGJiNzI2YzNjYiIsInR5cCI6IkpXVCJ9.eyJzdWJUeXBlIjoidXNlciIsInRlbmFudElkIjoiMEN4cl9qSXZILWlqUUp5VzVrWUZIZHdKb1pObVJLT1UiLCJqdGkiOiJlNmM0Mjc0My1lMWUyLTQwZmQtYjIzOS1hZjBiYjcyNmMzY2IiLCJhdWQiOiJxbGlrLmFwaSIsImlzcyI6InFsaWsuYXBpL2FwaS1rZXlzIiwic3ViIjoiRnVvNmFyM1IzbGJ5TkdFZlVpZG1RUWF2U0Q3c2YwN1cifQ.StCXk3OvAnV5GxEf2FXJNtomaPmsN-1DsTwswM55a90x19V9yfHiuq7hKk_pKkS7NW1yptpVvBFCuVStm2u3K7cNgXcnmS3GbgORUgEQpRPZkp6UTN1RFvvhTBKF5foj";
 
 const WEB_ID = "B0HZmvmOt3kMjQaTF6OavG8QloKH3ktW";
-const APP_ID = "961d1d90-fe99-4035-86be-c6d58ee2efa8";
+//const APP_ID = "961d1d90-fe99-4035-86be-c6d58ee2efa8";
+const APP_ID = "9b9a655b-67db-4456-b2e6-0c0d63b3679b";
 export const URL = "https://oaw5nbmep0bhq2j.eu.qlikcloud.com";
 
 export const run = async () => {
@@ -13,18 +14,8 @@ export const run = async () => {
     webIntegrationId: WEB_ID,
     appId: APP_ID,
   });
-};
 
-const options = {
-  // hostname: URL,
-  // port: 443,
-  // path: "/api/v1/questions/actions/ask",
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${API_KEY}`,
-    "qlik-web-integration-id": WEB_ID,
-  },
+  return app;
 };
 
 export const requestQlikBot = async (message) => {
@@ -56,4 +47,43 @@ export const requestQlikBot = async (message) => {
   return { result, img };
 };
 
-export default { URL, run, requestQlikBot };
+export const getObjectQlik = async (app) => {
+  let sessionObject = await app.createSessionObject({
+    qInfo: {
+      qType: "chart",
+    },
+    qHyperCubeDef: {
+      qDimensions: [
+        {
+          qDef: {
+            qFieldDefs: ["lng"],
+          },
+          qNullSuppression: true,
+        },
+        {
+          qDef: {
+            qFieldDefs: ["lat"],
+          },
+          qNullSuppression: true,
+        },
+      ],
+
+      qInitialDataFetch: [
+        {
+          qTop: 0,
+          qLeft: 0,
+          qWidth: 2,
+          qHeight: 5000,
+        },
+      ],
+      qInterColumnSortOrder: [0, 1],
+      qSuppressZero: true,
+    },
+  });
+
+  let sessionObjectLayout = await sessionObject.getLayout();
+  await app.destroySessionObject(sessionObject.id);
+  return sessionObjectLayout;
+};
+
+// export default { URL, run, requestQlikBot, getObjectQlik };

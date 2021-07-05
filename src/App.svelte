@@ -1,13 +1,18 @@
 <script>
   import { beforeUpdate, afterUpdate, onMount } from "svelte";
   import { fly } from "svelte/transition";
-  import { URL, run, requestQlikBot } from "./lib/function/qlik";
+  import { URL, run, requestQlikBot, getObjectQlik } from "./lib/function/qlik";
+  //   import GL from "../../svelte-deckgl/src/App.svelte";
 
   let div;
   let autoscroll;
   let requestValue;
+  let layout;
 
-  onMount(() => run());
+  onMount(async () => {
+    const app = await run();
+    layout = await getObjectQlik(app);
+  });
 
   beforeUpdate(() => {
     autoscroll =
@@ -86,6 +91,9 @@
   };
 </script>
 
+<!-- {#if layout}
+  <GL data={layout} />
+{/if} -->
 <div
   class="chat__button"
   on:click={() => {
@@ -129,9 +137,9 @@
       <div class="chat__scrollable_container">
         {#each comments as comment}
           <article class={comment.author}>
-            <span class="chat__scrollable__line"
-              >{comment.text}
-              {#if comment.img}
+            {#if comment.img}
+              <span class="chat__scrollable__line"
+                >{comment.text}
                 <a href={`${URL}/${comment.img}`}
                   ><img
                     class="chat__scrollable__img"
@@ -142,8 +150,10 @@
                     height="100%"
                   /></a
                 >
-              {/if}
-            </span>
+              </span>
+            {:else}
+              <span class="chat__scrollable__line">{comment.text}</span>
+            {/if}
           </article>
         {/each}
       </div>
@@ -174,7 +184,7 @@
     bottom: 4rem;
     right: 1.2rem;
     background: #fff;
-    box-shadow: 0 0px 50px 0 rgba(0, 0, 0, 0.2);
+    box-shadow: 0 0 0 1px rgb(0 0 0 / 5%), 0 6px 20px 0 rgb(0 0 0 / 10%);
     z-index: 9;
   }
   .chat__modal__header {
