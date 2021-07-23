@@ -2,7 +2,7 @@
   import { beforeUpdate, afterUpdate, onMount } from "svelte";
   import { fly } from "svelte/transition";
   import { URL, run, requestQlikBot, getObjectQlik } from "./lib/function/qlik";
-  //   import GL from "../../svelte-deckgl/src/App.svelte";
+    import GL from "../../svelte-deckgl/src/App.svelte";
 
   let div;
   let autoscroll;
@@ -91,9 +91,9 @@
   };
 </script>
 
-<!-- {#if layout}
+{#if layout}
   <GL data={layout} />
-{/if} -->
+{/if}
 <div
   class="chat__button"
   on:click={() => {
